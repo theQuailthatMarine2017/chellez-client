@@ -1,6 +1,21 @@
 <template>
   <div class="order">
+    <b-navbar :mobile-burger="false" fixed-top style="background-color: #8b4513;" :v-if="isMobile()">
+      <template slot="brand">
+            <b-navbar-item tag="router-link" :to="{ path: '/' }">
+                <img
+                    src="https://raw.githubusercontent.com/buefy/buefy/dev/static/img/buefy-logo.png"
+                    alt="Lightweight UI components for Vue.js based on Bulma"
+                >
+            </b-navbar-item>
+        </template>
 
+    </b-navbar>
+<div class="columns is-mobile" style="text-align:center;margin-top:50px;">
+  <div class="column is-one-third-mobile"><b-button @click="backHome()" type="is-success">Home</b-button></div>
+  <div class="column is-one-third-mobile"><b-button style="padding-right:40px;padding-left:40px;" expanded type="is-success">View Order</b-button></div>
+  <div class="column is-one-third-mobile"><b-button @click="about()" type="is-success">About</b-button></div>
+</div>
       <div class="container">
           <h1 class="title is-2" style="color: white;text-decoration: underline;padding-left:20px;text-align:center;margin-bottom:10px;">
             Your Order
@@ -13,9 +28,9 @@
             <div class="card" style="margin-bottom:20px;">
                 <div class="card-content">
                     <div class="content" style="font-weight:bolder;">
-                    Total Items Ordered: 
+                    Total Items Ordered: {{ menu.length }}
                     <br>
-                    Total Items Cost: 
+                    Total Items Cost: {{getTotal}}
                     <br>
                     <button class="button">Delete Order</button>
                     </div>
@@ -51,31 +66,28 @@ export default {
   name: 'Home',
   data(){
       return{
-        menu:[{
-          title:'Pizza Italian',
-          img:'https://i.pinimg.com/originals/31/ac/7d/31ac7d17b45a6b900090f8a237baa7e4.jpg',
-          description:'Tasty Homemade Italian Pizza!',
-          price:300
-        },
-        {
-          title:'Pasta Italian',
-          img:'https://i.pinimg.com/originals/29/73/7b/29737b8c90b655105668c79f5e23c743.jpg',
-          description:'Tasty Homemade Italian Pasta!',
-          price:300
-        },
-        {
-          title:'Chicken Wraps',
-          img:'https://food.fnr.sndimg.com/content/dam/images/food/fullset/2012/9/25/0/ZB0307H_grilled-chicken-caesar-wrap_s4x3.jpg.rend.hgtvcom.826.620.suffix/1371611416726.jpeg',
-          description:'Tasty Homemade French Pizza!',
-          price:300
-        },
-        {
-          title:'Roast Sausages',
-          img:'https://a-static.besthdwallpaper.com/sausage-wallpaper-3554x1999-3217_53.jpg',
-          description:'Tasty Homemade French Pizza!',
-          price:300
-        }]
+        menu:null,
+        total:[]
       }
+    },
+    created(){
+
+      this.menu = JSON.parse(localStorage.getItem("or"))
+
+      console.log(this.menu)
+
+    },
+    mounted(){
+
+      if(this.getTotal === 0) {
+
+        this.menu = JSON.parse(localStorage.getItem("or"))
+
+      }
+    
+
+    
+     
     },
     methods: {
             add_order(){
@@ -85,7 +97,38 @@ export default {
                     duration:4000,
                     position:'is-top'
                 })
+            },
+            backHome(){
+
+              this.$router.push({name:'Home'})
+            },
+            isMobile(){
+            if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+              return true
+            } else {
+              return false
             }
+          }
+        },
+        computed:{
+          getTotal(){
+
+            this.menu.forEach(element => {
+              
+              this.total.push(parseInt(element.price))
+              
+
+            });
+
+            var result = Object.values(this.total);
+            console.log(result)
+
+            var sum = result.reduce(function(a, b){
+                return a + b;
+            }, 0);
+            
+            return sum
+        }
         }
 }
 </script>
